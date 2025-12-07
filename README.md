@@ -190,7 +190,7 @@ If you prefer to work locally instead of using Codespaces:
 1. **Clone this repository:**
 
    ```bash
-   git clone https://github.com/scottluskraa/adventure-game.git
+   git clone https://github.com/Raising-Arrows-Academy/adventure-game.git
    cd adventure-game
    ```
 

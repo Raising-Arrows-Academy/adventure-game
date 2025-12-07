@@ -210,7 +210,7 @@ python castle_escape.py
 
 - [Python Official Tutorial](https://docs.python.org/3/tutorial/)
 - [W3Schools Python](https://www.w3schools. com/python/)
-- [Real Python Tutorials](https://realpython. com/)
+- [Real Python Tutorials](https://realpython.com/)
 
 ### Text-Based Games
 

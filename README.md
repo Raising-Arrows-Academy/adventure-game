@@ -109,6 +109,14 @@ adventure-game/
 ├── castle_escape/           # Castle Escape game folder
 │   ├── castle_escape.py     # The Castle Escape game code
 │   └── student_handout.md   # Student reference guide for Castle Escape
+├── prompts/                 # AI Prompt Library - Ready-to-use prompts!
+│   ├── README.md            # Guide to using prompts effectively
+│   ├── 01_adding_features/  # Core game mechanics (inventory, combat, etc.)
+│   ├── 02_expanding_world/  # Add rooms and items
+│   ├── 03_improving_gameplay/ # Scoring, save/load
+│   ├── 04_polish/           # Descriptions, ASCII art
+│   ├── 05_debugging/        # Debug errors and logic bugs
+│   └── templates/           # Create your own prompts
 ├── tests/                   # Test files
 │   └── test_main.py
 ├── requirements.txt         # Python dependencies (if any)
@@ -119,17 +127,35 @@ adventure-game/
 
 ## 🛠️ Development Workflow
 
+### 🎯 NEW! Using the AI Prompt Library
+
+**Want to add a feature?** Check out the **[AI Prompt Library](prompts/README.md)** first!
+
+The `prompts/` folder contains ready-to-use prompts for common features:
+- 🎒 **Inventory System** - Pick up and carry items
+- 🔑 **Locked Doors** - Require keys to progress
+- ⚔️ **Combat System** - Battle enemies
+- 🏰 **New Rooms** - Expand the castle
+- 💎 **Items** - Add treasures and tools
+- 🏆 **Scoring** - Track achievements
+- 💾 **Save/Load** - Preserve game progress
+- ✨ **Polish** - Better descriptions and ASCII art
+- 🐛 **Debugging** - Fix errors and logic bugs
+
+**Start here:** `prompts/01_adding_features/add_inventory_system.md`
+
 ### Adding Features with AI
 
 This project demonstrates how to collaborate with AI to build software:
 
 1. **Brainstorm**: What feature do we want?
-2. **Prompt**: How do we ask AI for it clearly?
-3. **Review**: What code did AI generate?
-4. **Understand**: What does each part do?
-5. **Test**: Does it work as expected?
-6. **Debug**: Fix any issues that arise
-7. **Repeat**: What's the next feature?
+2. **Check Prompt Library**: Is there a ready-made prompt for it?
+3. **Prompt**: How do we ask AI for it clearly?
+4. **Review**: What code did AI generate?
+5. **Understand**: What does each part do?
+6. **Test**: Does it work as expected?
+7. **Debug**: Fix any issues that arise
+8. **Repeat**: What's the next feature?
 
 ### Example Feature Additions
 

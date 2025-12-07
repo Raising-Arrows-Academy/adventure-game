@@ -182,7 +182,7 @@ If you prefer to work locally instead of using Codespaces:
 
 ### Prerequisites
 
-- Python 3.8 or higher installed ([python.org](https://www. python.org/downloads/))
+- Python 3.8 or higher installed ([python.org](https://www.python.org/downloads/))
 - Git installed ([git-scm.com](https://git-scm.com/))
 
 ### Setup

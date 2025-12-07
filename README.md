@@ -1,6 +1,6 @@
-# 🏰 Castle Escape - AI-Assisted Adventure Game
+# 🎮 Adventure Game Collection - AI-Assisted Learning
 
-Welcome to **Castle Escape**! This is a text-based adventure game built collaboratively using Python and AI as a learning tool.
+Welcome to the **Adventure Game Collection**! This is a collection of text-based adventure games built collaboratively using Python and AI as a learning tool. Currently featuring **Castle Escape**!
 
 ## 🎯 Project Overview
 
@@ -37,7 +37,7 @@ This project is designed to teach Python programming through an interactive, AI-
 
 ---
 
-## 🎮 How to Play the Game
+## 🎮 How to Play the Games
 
 Once your Codespace is ready (or if you're working locally):
 
@@ -47,7 +47,8 @@ Once your Codespace is ready (or if you're working locally):
    python main.py
    ```
 3. Press Enter
-4. Follow the on-screen instructions to play!
+4. Select a game from the menu (currently only Castle Escape is available)
+5. Follow the on-screen instructions to play!
 
 ### Game Commands
 
@@ -75,8 +76,9 @@ This repository contains materials for a classroom exercise in AI-assisted Pytho
 
 ### Included Materials
 
-- **`main.py`** - The base game code (well-commented for beginners)
-- **`student_handout.md`** - Printable handout for students
+- **`main.py`** - Game launcher (allows selection of different adventure games)
+- **`castle_escape/castle_escape.py`** - The Castle Escape game code (well-commented for beginners)
+- **`castle_escape/student_handout.md`** - Printable handout for students
 - **Lesson plans** - Structured session plans for teaching
 
 ### Teaching Approach
@@ -104,8 +106,12 @@ This project uses **Option A: "Feature Request Workshop"**:
 
 ```
 adventure-game/
-├── main.py         # Main game file - the base adventure
-├── student_handout.md       # Student reference guide
+├── main.py                  # Game launcher - select which game to play
+├── castle_escape/           # Castle Escape game folder
+│   ├── castle_escape.py     # The Castle Escape game code
+│   └── student_handout.md   # Student reference guide for Castle Escape
+├── tests/                   # Test files
+│   └── test_main.py
 ├── requirements.txt         # Python dependencies (if any)
 └── README.md               # This file
 ```

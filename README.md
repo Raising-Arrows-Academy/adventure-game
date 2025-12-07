@@ -75,7 +75,7 @@ This repository contains materials for a classroom exercise in AI-assisted Pytho
 
 ### Included Materials
 
-- **`castle_escape.py`** - The base game code (well-commented for beginners)
+- **`main.py`** - The base game code (well-commented for beginners)
 - **`student_handout.md`** - Printable handout for students
 - **Lesson plans** - Structured session plans for teaching
 
@@ -104,7 +104,7 @@ This project uses **Option A: "Feature Request Workshop"**:
 
 ```
 adventure-game/
-├── castle_escape.py         # Main game file - the base adventure
+├── main.py         # Main game file - the base adventure
 ├── student_handout.md       # Student reference guide
 ├── requirements.txt         # Python dependencies (if any)
 └── README.md               # This file
@@ -197,7 +197,7 @@ If you prefer to work locally instead of using Codespaces:
 2. **Run the game:**
 
 ```bash
-python castle_escape.py
+python main.py
 ```
 
 3. **Start playing!**

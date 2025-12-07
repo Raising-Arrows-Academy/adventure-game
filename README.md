@@ -105,7 +105,7 @@ This project uses **Option A: "Feature Request Workshop"**:
 ```
 adventure-game/
 ├── castle_escape.py         # Main game file - the base adventure
-├── student_handout. md       # Student reference guide
+├── student_handout.md       # Student reference guide
 ├── requirements.txt         # Python dependencies (if any)
 └── README.md               # This file
 ```

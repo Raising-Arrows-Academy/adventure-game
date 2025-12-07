@@ -79,7 +79,6 @@ This repository contains materials for a classroom exercise in AI-assisted Pytho
 - **`main.py`** - Game launcher (allows selection of different adventure games)
 - **`castle_escape/castle_escape.py`** - The Castle Escape game code (well-commented for beginners)
 - **`castle_escape/student_handout.md`** - Printable handout for students
-- **Lesson plans** - Structured session plans for teaching
 
 ### Teaching Approach
 

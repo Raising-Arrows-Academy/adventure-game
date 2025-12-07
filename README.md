@@ -164,8 +164,8 @@ When suggesting a feature, think about:
 
 3. **How might it work?**
 
-- Think through the user experience
-- Example: "Type 'take key' to pick up a key, 'inventory' to see what you're carrying"
+    - Think through the user experience
+    - Example: "Type 'take key' to pick up a key, 'inventory' to see what you're carrying"
 
 ### Feature Ideas to Get Started
 

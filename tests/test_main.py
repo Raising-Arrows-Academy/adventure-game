@@ -1,6 +1,6 @@
 """
 Test module for main.py.
-This demonstrates basic pytest usage.
+Tests the game launcher functionality.
 """
 
 import sys
@@ -9,17 +9,18 @@ from pathlib import Path
 # Add parent directory to path to import main module
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from main import main
+import main
 
 
-def test_main_runs_without_error(capsys):
-    """Test that main function runs without error and prints expected output."""
-    main()
+def test_show_game_menu(capsys):
+    """Test that game menu displays correctly."""
+    main.show_game_menu()
     captured = capsys.readouterr()
-    assert "Hello, World!" in captured.out
+    assert "ADVENTURE GAME COLLECTION" in captured.out
+    assert "Castle Escape" in captured.out
 
 
-def test_main_returns_none():
-    """Test that main function returns None."""
-    result = main()
-    assert result is None
+def test_launch_castle_escape_function_exists():
+    """Test that launch_castle_escape function exists."""
+    assert hasattr(main, "launch_castle_escape")
+    assert callable(main.launch_castle_escape)

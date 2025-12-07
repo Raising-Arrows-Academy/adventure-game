@@ -5,8 +5,6 @@ Created with AI assistance for Python learning
 Select and play different adventure games!
 """
 
-import sys
-import os
 
 
 def show_game_menu():

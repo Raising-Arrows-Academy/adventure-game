@@ -44,7 +44,7 @@ Once your Codespace is ready (or if you're working locally):
 1. Open the terminal at the bottom of the screen
 2. Type:
    ```bash
-   python castle_escape.py
+   python main.py
    ```
 3. Press Enter
 4. Follow the on-screen instructions to play!

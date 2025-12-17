@@ -290,6 +290,134 @@ def check_for_encounter(current_room, rooms_cleared):
     return None
 
 
+def show_maze_path(maze_path):
+    """Display the path the player has taken through the maze"""
+    if maze_path:
+        print("\n📍 Your path through the maze: " + " -> ".join(maze_path))
+    else:
+        print("\n📍 You haven't made any moves in the maze yet.")
+
+
+def navigate_maze(health, inventory, abilities, max_health, maze_battles_cleared):
+    """Navigate through the maze - returns health after maze completion"""
+    print("\n" + "=" * 50)
+    print("🌲 THE MAZE 🌲")
+    print("=" * 50)
+    print("\nYou enter a dark hedge maze. The walls tower above you.")
+    print("You must find your way through to reach freedom!")
+    print("\nType 'left' or 'right' to navigate. Type 'back' to retrace your steps.")
+    print("Type 'path' to see where you've been.")
+
+    # Define the correct path through the maze
+    # This is the winning path the player needs to discover
+    correct_path = ["left", "right", "left", "left", "right", "left", "right", "right"]
+
+    # Define battle points in the maze (after certain moves)
+    battle_points = [2, 5, 7]  # Battles after 2nd, 5th, and 7th moves
+
+    # Track player's path
+    maze_path = []
+
+    # Maze navigation loop
+    while True:
+        print("\n" + "-" * 50)
+        print(f"Maze Progress: {len(maze_path)}/{len(correct_path)} moves")
+        print("-" * 50)
+
+        command = (
+            input("\nWhich way do you go? (left/right/back/path) > ").lower().strip()
+        )
+
+        if command == "path":
+            show_maze_path(maze_path)
+            continue
+
+        elif command == "back":
+            if maze_path:
+                removed = maze_path.pop()
+                print(f"\nYou backtrack, retracing your steps from going {removed}.")
+            else:
+                print("\nYou're at the entrance. You can't go back further!")
+            continue
+
+        elif command in ["left", "right", "l", "r"]:
+            # Convert short form to full
+            if command == "l":
+                command = "left"
+            elif command == "r":
+                command = "right"
+
+            # Add move to path
+            maze_path.append(command)
+            print(f"\nYou turn {command} and continue through the maze...")
+
+            # Check if this is the correct path so far
+            current_position = len(maze_path) - 1
+
+            if (
+                current_position < len(correct_path)
+                and maze_path[current_position] == correct_path[current_position]
+            ):
+                print("The path seems promising...")
+
+                # Check for battles at battle points
+                if (
+                    current_position + 1 in battle_points
+                    and current_position + 1 not in maze_battles_cleared
+                ):
+                    enemies = ["maze guardian", "lost warrior", "maze beast"]
+                    enemy_name = enemies[battle_points.index(current_position + 1)]
+                    print(f"\nA {enemy_name} blocks your path!")
+                    health = battle(
+                        enemy_name, 3, health, inventory, abilities, max_health
+                    )
+                    maze_battles_cleared.append(current_position + 1)
+
+                    # Check if player died
+                    if health <= 0:
+                        print("\n💀 You died in the maze!")
+                        return 0  # Return 0 health to trigger death
+
+                    print(f"\nHealth: {'❤️' * health}")
+
+                # Check if player completed the maze
+                if len(maze_path) == len(correct_path):
+                    print("\n" + "=" * 50)
+                    print("🎉 SUCCESS! 🎉")
+                    print("You found the exit of the maze!")
+                    print("The path opens up to reveal the way to freedom!")
+                    print("=" * 50)
+                    show_maze_path(maze_path)
+                    return health
+
+            else:
+                # Wrong turn - dead end
+                print("\n💀 DEAD END! 💀")
+                print("You hit a wall of thick hedges. This isn't the way!")
+                print("You must turn back.")
+                maze_path.pop()  # Remove the wrong turn
+
+                # Small chance of enemy encounter at dead ends
+                if random.randint(1, 100) <= 30:  # 30% chance
+                    print("\nA wandering skeleton appears from the dead end!")
+                    health = battle(
+                        "skeleton", 2, health, inventory, abilities, max_health
+                    )
+
+                    if health <= 0:
+                        print("\n💀 You died in the maze!")
+                        return 0
+
+                    print(f"\nHealth: {'❤️' * health}")
+
+        elif command == "quit":
+            print("\nYou can't quit now! You're in the maze!")
+            print("Find your way out or turn back to the entrance.")
+
+        else:
+            print("\nInvalid command! Use 'left', 'right', 'back', or 'path'.")
+
+
 def check_for_trap(current_room, health, abilities):
     """Check if current room has a trap and apply damage"""
     # Define which rooms have traps
@@ -382,9 +510,9 @@ def main():
             "north": "moat",
         },
         "moat": {
-            "description": "You are at the castle moat. A wooden drawbridge stretches across murky water.\nYou can see the forest exit to the NORTH - freedom awaits!\nThe courtyard is to the SOUTH.",
+            "description": "You are at the castle moat. A wooden drawbridge stretches across murky water.\nBeyond the bridge to the NORTH, you see the entrance to a dark hedge MAZE.\nYou must pass through it to reach freedom! The courtyard is to the SOUTH.",
             "south": "courtyard",
-            "north": "freedom",
+            "north": "maze_entrance",
         },
     }
 
@@ -411,6 +539,7 @@ def main():
     inventory = []  # Items the player is carrying
     abilities = {}  # Active abilities with turn counters
     rooms_cleared = []  # Track which rooms have been cleared of enemies
+    maze_battles_cleared = []  # Track which maze battles have been completed
 
     # Game starts in the dungeon
     current_room = "dungeon"
@@ -484,7 +613,59 @@ def main():
             if command in rooms[current_room]:
                 next_room = rooms[current_room][command]
 
-                # Check for win condition!
+                # Check if entering the maze
+                if next_room == "maze_entrance":
+                    health = navigate_maze(
+                        health, inventory, abilities, max_health, maze_battles_cleared
+                    )
+
+                    # Check if player died in maze
+                    if health <= 0:
+                        print("\n" + "=" * 50)
+                        print("💀 YOU DIED! 💀")
+                        print("Your health has run out.")
+                        print("=" * 50)
+                        print("\nRestarting game...\n")
+                        # Reset to start
+                        current_room = "dungeon"
+                        health = 5
+                        inventory = []
+                        abilities = {}
+                        rooms_cleared = []
+                        maze_battles_cleared = []
+                        # Refill room items
+                        room_items = {
+                            "dungeon": ["bread", "stone"],
+                            "weapon_room": [
+                                "sword",
+                                "armor",
+                                "strength elixir",
+                                "crossbow",
+                                "mace",
+                                "poison potion",
+                            ],
+                            "kitchen": ["apple", "bread", "knife"],
+                            "dining_hall": ["apple", "elixir"],
+                            "chamber_room": [
+                                "invisibility potion",
+                                "spear",
+                                "poison potion",
+                            ],
+                            "courtyard": ["stealth cloak"],
+                        }
+                        show_status(health, max_health)
+                        show_room(current_room, rooms, room_items)
+                        continue
+
+                    # Player survived the maze - they win!
+                    print("\n" + "=" * 50)
+                    print("🎉 CONGRATULATIONS! 🎉")
+                    print("You escaped the castle and made it through the maze!")
+                    print("YOU WIN!")
+                    print("=" * 50)
+                    break
+
+                # Check for win condition (legacy, now requires maze)
                 if next_room == "freedom":
                     print("\n" + "=" * 50)
                     print("🎉 CONGRATULATIONS! 🎉")
@@ -530,6 +711,7 @@ def main():
                     inventory = []
                     abilities = {}
                     rooms_cleared = []
+                    maze_battles_cleared = []
                     # Refill room items
                     room_items = {
                         "dungeon": ["bread", "stone"],
@@ -576,6 +758,7 @@ def main():
                     inventory = []
                     abilities = {}
                     rooms_cleared = []
+                    maze_battles_cleared = []
                     # Refill room items
                     room_items = {
                         "dungeon": ["bread", "stone"],

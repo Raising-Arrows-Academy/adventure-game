@@ -20,6 +20,7 @@ def show_help():
     """Show available commands to the player"""
     print("\n--- AVAILABLE COMMANDS ---")
     print("  north, south, east, west - Move in that direction")
+    print("  up, down - Go up or down stairs")
     print("  look - Look around the current room")
     print("  help - Show this help message")
     print("  quit - Exit the game")
@@ -40,17 +41,47 @@ def main():
     # Each room has a description and exits (which direction leads where)
     rooms = {
         "dungeon": {
-            "description": "You are in a dark dungeon cell. There is a door to the NORTH.",
+            "description": "You are in a dark dungeon cell. Water drips from the ceiling.\nThere is a heavy wooden door to the NORTH.",
             "north": "hallway",
         },
         "hallway": {
-            "description": "You are in a castle hallway.  Torches flicker on the walls.\nThere is a door to the SOUTH and another to the NORTH.",
+            "description": "You are in a dimly lit castle hallway. Torches flicker on the walls.\nYou can go SOUTH to the dungeon, NORTH to the kitchen, or EAST to the weapon room.",
             "south": "dungeon",
-            "north": "courtyard",
+            "north": "kitchen",
+            "east": "weapon_room",
+        },
+        "weapon_room": {
+            "description": "You are in the weapon room. Swords, shields, and armor hang on the walls.\nThe air smells of metal and oil. You can go WEST back to the hallway.",
+            "west": "hallway",
+        },
+        "kitchen": {
+            "description": "You are in the castle kitchen. Old pots and pans hang from hooks.\nA cold fireplace sits in the corner. You can go SOUTH to the hallway,\nEAST to the dining hall, or UP the stairs.",
+            "south": "hallway",
+            "east": "dining_hall",
+            "up": "chamber_room",
+        },
+        "dining_hall": {
+            "description": "You are in the grand dining hall. A long wooden table stretches across the room.\nDusty goblets and plates sit untouched. You can go WEST to the kitchen\nor NORTH to the throne room.",
+            "west": "kitchen",
+            "north": "throne_room",
+        },
+        "throne_room": {
+            "description": "You are in the magnificent throne room. A golden throne sits on a raised platform.\nRed velvet curtains hang from the tall windows. You can go SOUTH to the dining hall\nor EAST to the courtyard.",
+            "south": "dining_hall",
+            "east": "courtyard",
+        },
+        "chamber_room": {
+            "description": "You are in a private chamber room. A dusty bed sits against the wall.\nOld paintings hang crookedly. You can go DOWN the stairs back to the kitchen.",
+            "down": "kitchen",
         },
         "courtyard": {
-            "description": "You are in the castle courtyard!  You can see the exit to NORTH.\nFreedom is so close!",
-            "south": "hallway",
+            "description": "You are in the castle courtyard! Fresh air fills your lungs.\nYou can see the drawbridge to the NORTH leading over the moat.\nThe throne room is to the WEST.",
+            "west": "throne_room",
+            "north": "moat",
+        },
+        "moat": {
+            "description": "You are at the castle moat. A wooden drawbridge stretches across murky water.\nYou can see the forest exit to the NORTH - freedom awaits!\nThe courtyard is to the SOUTH.",
+            "south": "courtyard",
             "north": "freedom",
         },
     }
@@ -78,7 +109,20 @@ def main():
         elif command == "look":
             show_room(current_room, rooms)
 
-        elif command in ["north", "south", "east", "west", "n", "s", "e", "w"]:
+        elif command in [
+            "north",
+            "south",
+            "east",
+            "west",
+            "up",
+            "down",
+            "n",
+            "s",
+            "e",
+            "w",
+            "u",
+            "d",
+        ]:
             # Convert short versions to full directions
             if command == "n":
                 command = "north"
@@ -88,6 +132,10 @@ def main():
                 command = "east"
             elif command == "w":
                 command = "west"
+            elif command == "u":
+                command = "up"
+            elif command == "d":
+                command = "down"
 
             # Check if we can go that direction from current room
             if command in rooms[current_room]:

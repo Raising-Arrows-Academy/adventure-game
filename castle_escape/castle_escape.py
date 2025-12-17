@@ -5,6 +5,8 @@ Created with AI assistance for Python learning
 You wake up in a dungeon and must escape the castle!
 """
 
+import random
+
 
 def show_intro():
     """Display the game introduction"""
@@ -27,6 +29,11 @@ def show_help():
     print("  use [item] - Use an item from your inventory")
     print("  help - Show this help message")
     print("  quit - Exit the game")
+    print("\n--- COMBAT COMMANDS (during battle) ---")
+    print("  attack - Attack with your equipped weapon")
+    print("  dodge - Try to avoid the enemy's next attack")
+    print("  heal - Use health items during battle")
+    print("  poison - Use a poison potion on the enemy")
     print()
 
 
@@ -126,6 +133,161 @@ def update_abilities(abilities):
     # Remove expired abilities
     for ability in expired:
         del abilities[ability]
+
+
+def get_weapon_damage(weapon, abilities):
+    """Calculate damage based on weapon type and abilities"""
+    # Base damage for each weapon
+    weapon_damage = {
+        "sword": 2,
+        "crossbow": 3,
+        "spear": 2,
+        "mace": 3,
+        "knife": 1,
+        "stone": 1,
+    }
+
+    damage = weapon_damage.get(weapon, 0)
+
+    # Strength ability adds extra damage
+    if "strength" in abilities:
+        damage += 1
+
+    return damage
+
+
+def battle(
+    opponent_name, opponent_health, player_health, inventory, abilities, max_health
+):
+    """Combat system - player fights an opponent"""
+    print("\n" + "=" * 50)
+    print(f"⚔️  BATTLE: {opponent_name.upper()} ⚔️")
+    print("=" * 50)
+    print(f"\nA {opponent_name} blocks your path!")
+
+    # Check if player has a weapon
+    weapons = ["sword", "crossbow", "spear", "mace", "knife", "stone"]
+    player_weapons = [item for item in inventory if item in weapons]
+
+    if not player_weapons:
+        print("\nYou have no weapons to fight with!")
+        print(f"The {opponent_name} attacks you mercilessly!")
+        return player_health - 2  # Take damage for having no weapon
+
+    # Use the best weapon available
+    current_weapon = player_weapons[0]
+
+    # Battle loop
+    while opponent_health > 0 and player_health > 0:
+        # Show battle status
+        print("\n" + "-" * 50)
+        print(f"{opponent_name.upper()}: {'❤️' * opponent_health}")
+        print(f"YOU: {'❤️' * player_health}")
+        print(f"Weapon: {current_weapon}")
+        print("-" * 50)
+
+        # Player's turn
+        print("\nYour turn! Choose an action:")
+        print("  [1] Attack")
+        print("  [2] Dodge")
+        print("  [3] Heal (use health item)")
+        print("  [4] Poison (use poison potion)")
+
+        choice = input("\nEnter your choice (1-4): ").strip()
+
+        player_dodging = False
+
+        if choice == "1":  # Attack
+            damage = get_weapon_damage(current_weapon, abilities)
+            opponent_health -= damage
+            print(f"\nYou attack with your {current_weapon}! -{damage} damage")
+            if opponent_health <= 0:
+                print(f"\n🎉 Victory! You defeated the {opponent_name}!")
+                break
+
+        elif choice == "2":  # Dodge
+            player_dodging = True
+            print("\nYou prepare to dodge the next attack!")
+
+        elif choice == "3":  # Heal
+            # Check for healing items
+            healing_items = ["apple", "bread", "elixir"]
+            player_healing = [item for item in inventory if item in healing_items]
+
+            if player_healing:
+                heal_item = player_healing[0]
+                if heal_item == "apple":
+                    heal_amount = 2
+                elif heal_item == "bread":
+                    heal_amount = 1
+                elif heal_item == "elixir":
+                    heal_amount = 3
+
+                player_health = min(player_health + heal_amount, max_health)
+                inventory.remove(heal_item)
+                print(f"\nYou use {heal_item}! +{heal_amount} health")
+            else:
+                print("\nYou have no healing items!")
+                print("You lose your turn...")
+
+        elif choice == "4":  # Poison
+            if "poison potion" in inventory:
+                opponent_health -= 2
+                inventory.remove("poison potion")
+                print(
+                    "\nYou throw a poison potion! The enemy takes -2 damage and is poisoned!"
+                )
+                if opponent_health <= 0:
+                    print(f"\n🎉 Victory! You defeated the {opponent_name}!")
+                    break
+            else:
+                print("\nYou don't have a poison potion!")
+                print("You lose your turn...")
+
+        else:
+            print("\nInvalid choice! You hesitate and lose your turn!")
+
+        # Check if opponent is defeated
+        if opponent_health <= 0:
+            break
+
+        # Opponent's turn
+        opponent_action = random.choice(
+            ["attack", "attack", "dodge"]
+        )  # More likely to attack
+
+        if opponent_action == "attack":
+            if player_dodging:
+                print(f"\nThe {opponent_name} attacks but you dodge!")
+            else:
+                damage = random.randint(1, 2)  # Opponent does 1-2 damage
+                player_health -= damage
+                print(f"\nThe {opponent_name} attacks you! -{damage} damage")
+        else:
+            print(f"\nThe {opponent_name} dodges and prepares to counter!")
+
+    print("\n" + "=" * 50)
+    print("Battle Over!")
+    print("=" * 50)
+
+    return player_health
+
+
+def check_for_encounter(current_room, rooms_cleared):
+    """Check if player encounters an enemy in this room"""
+    # Define which rooms have enemies
+    enemy_rooms = {
+        "hallway": {"name": "king guard", "health": 3},
+        "kitchen": {"name": "kitchen chef", "health": 3},
+        "dining_hall": {"name": "servant", "health": 3},
+        "throne_room": {"name": "king guard", "health": 3},
+    }
+
+    # Check if this room has an enemy and hasn't been cleared
+    if current_room in enemy_rooms and current_room not in rooms_cleared:
+        return enemy_rooms[current_room]
+
+    return None
 
 
 def check_for_trap(current_room, health, abilities):
@@ -228,11 +390,18 @@ def main():
 
     # Define items in each room
     room_items = {
-        "dungeon": ["bread"],
-        "weapon_room": ["sword", "armor", "strength elixir"],
-        "kitchen": ["apple", "bread"],
+        "dungeon": ["bread", "stone"],
+        "weapon_room": [
+            "sword",
+            "armor",
+            "strength elixir",
+            "crossbow",
+            "mace",
+            "poison potion",
+        ],
+        "kitchen": ["apple", "bread", "knife"],
         "dining_hall": ["apple", "elixir"],
-        "chamber_room": ["invisibility potion"],
+        "chamber_room": ["invisibility potion", "spear", "poison potion"],
         "courtyard": ["stealth cloak"],
     }
 
@@ -241,6 +410,7 @@ def main():
     max_health = 5  # Maximum health
     inventory = []  # Items the player is carrying
     abilities = {}  # Active abilities with turn counters
+    rooms_cleared = []  # Track which rooms have been cleared of enemies
 
     # Game starts in the dungeon
     current_room = "dungeon"
@@ -327,13 +497,71 @@ def main():
                 current_room = next_room
                 show_room(current_room, rooms, room_items)
 
+                # Check for enemy encounters
+                encounter = check_for_encounter(current_room, rooms_cleared)
+                if encounter:
+                    health = battle(
+                        encounter["name"],
+                        encounter["health"],
+                        health,
+                        inventory,
+                        abilities,
+                        max_health,
+                    )
+                    rooms_cleared.append(current_room)  # Mark room as cleared
+                    show_status(health, max_health)
+
                 # Check for traps in the new room
                 old_health = health
                 health = check_for_trap(current_room, health, abilities)
 
                 # Show health status if it changed
                 if health != old_health:
+                    show_status(health, max_health)  # Check if player died
+                if health <= 0:
+                    print("\n" + "=" * 50)
+                    print("💀 YOU DIED! 💀")
+                    print("Your health has run out.")
+                    print("=" * 50)
+                    print("\nRestarting game...\n")
+                    # Reset to start
+                    current_room = "dungeon"
+                    health = 5
+                    inventory = []
+                    abilities = {}
+                    rooms_cleared = []
+                    # Refill room items
+                    room_items = {
+                        "dungeon": ["bread", "stone"],
+                        "weapon_room": [
+                            "sword",
+                            "armor",
+                            "strength elixir",
+                            "crossbow",
+                            "mace",
+                            "poison potion",
+                        ],
+                        "kitchen": ["apple", "bread", "knife"],
+                        "dining_hall": ["apple", "elixir"],
+                        "chamber_room": [
+                            "invisibility potion",
+                            "spear",
+                            "poison potion",
+                        ],
+                        "courtyard": ["stealth cloak"],
+                    }
                     show_status(health, max_health)
+                    show_room(current_room, rooms, room_items)
+            else:
+                print("\nYou can't go that way!")
+
+        else:
+            print("\nI don't understand that command.  Type 'help' for options.")
+            # Random chance to encounter a thief when making invalid moves
+            if random.randint(1, 100) <= 20:  # 20% chance
+                print("\nWhile you're confused, a thief appears!")
+                health = battle("thief", 3, health, inventory, abilities, max_health)
+                show_status(health, max_health)
 
                 # Check if player died
                 if health <= 0:
@@ -347,22 +575,29 @@ def main():
                     health = 5
                     inventory = []
                     abilities = {}
+                    rooms_cleared = []
                     # Refill room items
                     room_items = {
-                        "dungeon": ["bread"],
-                        "weapon_room": ["sword", "armor", "strength elixir"],
-                        "kitchen": ["apple", "bread"],
+                        "dungeon": ["bread", "stone"],
+                        "weapon_room": [
+                            "sword",
+                            "armor",
+                            "strength elixir",
+                            "crossbow",
+                            "mace",
+                            "poison potion",
+                        ],
+                        "kitchen": ["apple", "bread", "knife"],
                         "dining_hall": ["apple", "elixir"],
-                        "chamber_room": ["invisibility potion"],
+                        "chamber_room": [
+                            "invisibility potion",
+                            "spear",
+                            "poison potion",
+                        ],
                         "courtyard": ["stealth cloak"],
                     }
                     show_status(health, max_health)
                     show_room(current_room, rooms, room_items)
-            else:
-                print("\nYou can't go that way!")
-
-        else:
-            print("\nI don't understand that command.  Type 'help' for options.")
 
 
 # This starts the game when you run the file
